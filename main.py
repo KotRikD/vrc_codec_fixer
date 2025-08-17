@@ -78,8 +78,7 @@ class MyWidget(QtWidgets.QWidget):
         mainLayout.addWidget(self.log_text)
 
         self.setLayout(mainLayout)
-        
-        # Проверяем кодеки при запуске
+
         self.check_codecs()
 
     def log_message(self, message):
@@ -104,22 +103,22 @@ class MyWidget(QtWidgets.QWidget):
         
         for package in packages:
             try:
-                self.log_message(f"Устанавливаю пакет {package} через winget...")
+                self.log_message(f"Installing {package} using winget...")
                 result = subprocess.run(['winget', 'install', package, '--accept-source-agreements', '--accept-package-agreements'], 
                                       capture_output=True, text=True, timeout=300, encoding="utf-8", creationflags=subprocess.CREATE_NO_WINDOW)
                 if result.returncode == 0:
-                    self.log_message(f"Пакет {package} успешно установлен")
+                    self.log_message(f"Package {package} successfully installed!")
                     continue
 
                 if result.returncode == 2316632107:
-                    self.log_message(f"Пакет {package} уже установлен")
+                    self.log_message(f"Package {package} has been already installed!")
                     continue
 
-                self.log_message(f"Ошибка установки пакета {package}: {result.stderr}")
+                self.log_message(f"Error while installing {package}: {result.stderr}")
             except subprocess.TimeoutExpired:
-                self.log_message(f"Таймаут при установке пакета {package}")
+                self.log_message(f"Timeout when installing {package}")
             except Exception as e:
-                self.log_message(f"Ошибка при установке пакета {package}: {e}")
+                self.log_message(f"Error when installing {package}: {e}")
 
     def install_via_powershell(self, script: str):
         try:
@@ -133,15 +132,15 @@ class MyWidget(QtWidgets.QWidget):
                                   cwd=cmd_dir, capture_output=True, text=True, timeout=300, encoding="utf-8", creationflags=subprocess.CREATE_NO_WINDOW)
 
             if result.returncode == 0:
-                self.log_message(f"PowerShell скрипт успешно выполнен: {result.stdout}")
+                self.log_message(f"PowerShell script has been executed successfully: {result.stdout}")
                 return
 
-            self.log_message(f"Ошибка выполнения PowerShell скрипта: {result.stderr}")
+            self.log_message(f"Error while executing PowerShell script: {result.stderr}")
 
         except subprocess.TimeoutExpired:
-            self.log_message("Таймаут при выполнении PowerShell скрипта")
+            self.log_message("Timeout while executing PowerShell script")
         except Exception as e:
-            self.log_message(f"Ошибка при запуске PowerShell скрипта: {e}")
+            self.log_message(f"Error while executing PowerShell script: {e}")
 
     def install_codecs(self):
         self.button.setEnabled(False)
@@ -150,22 +149,22 @@ class MyWidget(QtWidgets.QWidget):
 
         try:
             if self.check_winget_available():
-                self.log_message("winget.exe доступен, устанавливаю через него...")
+                self.log_message("winget.exe available, installing through it...")
                 self.install_via_winget()
                 self.install_via_powershell('InstallHevc.ps1')
             else:
-                self.log_message("winget.exe недоступен, запускаю PowerShell скрипт...")
+                self.log_message("winget.exe unavailable, running PowerShell script...")
                 self.install_via_powershell('InstallCodecs.ps1')
         finally:
             self.button.setEnabled(True)
             self.button.setText("Install codecs")
             
         # Проверяем кодеки после установки
-        self.log_message("Проверяю кодеки после установки...")
+        self.log_message("Checking codecs after install...")
         self.check_codecs()
 
     def check_codecs(self):
-        self.log_message("Проверяю наличие кодеков...")
+        self.log_message("Checking codecs...")
 
         # Проверяем AV1
         av1_installed = self.check_codec_template("AV1", "av1", "9n4d0msmp0pt")
@@ -183,7 +182,7 @@ class MyWidget(QtWidgets.QWidget):
         hevc_installed = self.check_codec_template("HEVC", "hevc", "9n4wgh0z6vhq")
         self.update_codec_status(self.hevc_status, hevc_installed, "HEVC")
 
-        self.log_message("Проверка кодеков завершена")
+        self.log_message("Codec check is done!")
 
     def check_codec_template(self, codec_name, codec_lower, winget_id):
         try:
@@ -203,7 +202,7 @@ class MyWidget(QtWidgets.QWidget):
             except Exception:
                 pass
         except Exception as e:
-            self.log_message(f"Ошибка при проверке {codec_name}: {e}")
+            self.log_message(f"Error when checking {codec_name}: {e}")
 
         return False
 
@@ -223,12 +222,12 @@ class MyWidget(QtWidgets.QWidget):
         if is_installed:
             status_label.setText("Yes")
             status_label.setStyleSheet('color: green')
-            self.log_message(f"Кодек {codec_name} найден в системе")
+            self.log_message(f"Codec {codec_name} found in system")
             return
 
         status_label.setText("No")
         status_label.setStyleSheet('color: red')
-        self.log_message(f"Кодек {codec_name} не найден в системе")
+        self.log_message(f"Codec {codec_name} not found in system")
 
 def main():
     # Prints the Qt version used to compile PySide6
