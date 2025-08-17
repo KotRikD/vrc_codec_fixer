@@ -1,0 +1,1 @@
+Add-AppxPackage hevc.appxbundle
