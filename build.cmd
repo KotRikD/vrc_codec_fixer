@@ -1,1 +1,1 @@
-pyinstaller --onefile vrc-codecs.spec
+pyinstaller --onefile main.spec

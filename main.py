@@ -206,18 +206,6 @@ class MyWidget(QtWidgets.QWidget):
 
         return False
 
-    def check_av1_codec(self):
-        return self.check_codec_template("AV1", "av1", "9n4d0msmp0pt")
-
-    def check_vp9_codec(self):
-        return self.check_codec_template("VP9", "vp9", "9mvzqvxjbq9v")
-
-    def check_dolby_codec(self):
-        return self.check_codec_template("Dolby", "dolby", "9nvjqjbdkn97")
-
-    def check_hevc_codec(self):
-        return self.check_codec_template("HEVC", "hevc", "9nvjqjbdkn97")
-
     def update_codec_status(self, status_label, is_installed, codec_name):
         if is_installed:
             status_label.setText("Yes")
